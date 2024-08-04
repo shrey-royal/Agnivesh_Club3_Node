@@ -1,0 +1,4 @@
+Install Express (globally): npm install express -g
+Install Nodemon (globally): npm install nodemon -g
+
+devDependencies: npm install --save-dev nodemon
