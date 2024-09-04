@@ -68,10 +68,27 @@ const updateUser = async (req, res) => {
     })
 }
 
+const getUserByAge = async (req, res) => {
+    const age = req.params.age;
+
+    const usersByAge = await userModel.find({ age: { $gte: age } });
+    if(usersByAge && usersByAge.length > 0) {
+        req.status(200).json({
+            message: "users filters by Age",
+            data: usersByAge
+        })
+    } else {
+        res.status(400).json({
+            message: "no user found"
+        })
+    }
+}
+
 module.exports = {
     getAllUsersFromDB,
     getUserById,
     addUser,
     deleteUser,
     updateUser,
+    getUserByAge
 }
