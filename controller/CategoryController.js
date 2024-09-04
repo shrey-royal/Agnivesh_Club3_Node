@@ -14,6 +14,21 @@ const createCategory = async (req, res) => {
     }
 }
 
+const getAllCategory = async (req, res)=> {
+    try {
+        const categories = await categoryModel.find();
+        res.status(200).json({
+            message: "Category list",
+            data: categories
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: "Error in fetching category",
+        })
+    }
+}
+
 module.exports = {
     createCategory,
+    getAllCategory
 } 
