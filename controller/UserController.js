@@ -24,19 +24,26 @@ const getUserById = async(req, res) => {
 }
 
 const addUser = async(req, res) => {
-    const user = req.body;
-    if(user.name == undefined || user.email == undefined || user.age == undefined || user.status == undefined) {
-        res.status(404).json({
-            message: "data is not correct"
-        })
-    } else {
-        const saveUser = await userModel.create(req.body);
+    // const user = req.body;
+    // if(user.name == undefined || user.email == undefined || user.age == undefined || user.status == undefined) {
+    //     res.status(404).json({
+    //         message: "data is not correct"
+    //     })
+    // } else {
+    //     const saveUser = await userModel.create(req.body);
 
-        res.status(201).json({
-            message: "success",
-            data: saveUser
-        })
-    }
+    //     res.status(201).json({
+    //         message: "success",
+    //         data: saveUser
+    //     })
+    // }
+
+    const saveUser = await userModel.create(req.body);
+
+    res.status(201).json({
+        message: "success",
+        data: saveUser
+    })
 }
 
 const deleteUser = async (req, res) => {
