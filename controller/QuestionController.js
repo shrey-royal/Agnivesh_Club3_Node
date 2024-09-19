@@ -5,12 +5,12 @@ const createQuestion = async (req, res) => {
         const savedQuestion = await questionModel.create(req.body);
         if (savedQuestion) {
             res.status(201).json({
-                message: "Question saved successfully.",
+                message: "Question created successfully.",
                 data: savedQuestion,
             });
         } else {
             res.status(500).json({
-                message: "Error while saving question!"
+                message: "error while saving question!"
             });
         }
     } catch (err) {
@@ -19,8 +19,30 @@ const createQuestion = async (req, res) => {
             error: err,
         });
     }
+};
+
+const getAllQuestions = async (req, res) => {
+    try {
+        const question = await questionModel.find();
+        if (question && question.length > 0) {
+            res.status(200).json({
+                message: "All Questions",
+                data: question,
+            });
+        } else {
+            res.status(200).json({
+                message: "No question found",
+                data: [],
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
 }
 
 module.exports = {
     createQuestion,
+    getAllQuestions
 }
