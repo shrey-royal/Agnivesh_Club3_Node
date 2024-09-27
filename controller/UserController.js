@@ -1,4 +1,7 @@
+const UserModel = require('../models/UserModel');
 const userModel = require('../models/UserModel');
+const encrypt = require('../util/encrypt');
+const tokenUtil = require('../util/token');
 
 const getAllUsersFromDB = async(req, res) => {
     const users = await userModel.find()
@@ -24,21 +27,12 @@ const getUserById = async(req, res) => {
 }
 
 const addUser = async(req, res) => {
-    // const user = req.body;
-    // if(user.name == undefined || user.email == undefined || user.age == undefined || user.status == undefined) {
-    //     res.status(404).json({
-    //         message: "data is not correct"
-    //     })
-    // } else {
-    //     const saveUser = await userModel.create(req.body);
+    const hashedPassword = encrypt.encryptPassword(req.body.password);
+    const userObject = Object.assign(req.body, {
+        password: hashedPassword
+    });
 
-    //     res.status(201).json({
-    //         message: "success",
-    //         data: saveUser
-    //     })
-    // }
-
-    const saveUser = await userModel.create(req.body);
+    const saveUser = await userModel.create(userObject);
 
     res.status(201).json({
         message: "success",
@@ -91,11 +85,50 @@ const getUserByAge = async (req, res) => {
     }
 }
 
+const loginUser = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        // console.log("email", email);
+        // console.log("password", password);
+
+        const emailFromUser = await userModel.findOne({ email: email });
+        
+        if(emailFromUser) {
+            const isPasswordMatched = encrypt.comparePassword(password, emailFromUser.password);
+
+            if (isPasswordMatched == true) {
+                const token = tokenUtil.generateToken(emailFromUser.toObject());
+                res.status(200).json({
+                    message: "Login Success",
+                    // data: emailFromUser,
+                    data: token,
+                });
+            } else {
+                res.status(400).json({
+                    message: "Invalid Password"
+                });
+            }
+        } else {
+            res.status(404).json({
+                message: "User Not Found"
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal Server Error",
+            error: err
+        });
+    }
+}
+
 module.exports = {
     getAllUsersFromDB,
     getUserById,
     addUser,
     deleteUser,
     updateUser,
-    getUserByAge
+    getUserByAge,
+    loginUser
 }
