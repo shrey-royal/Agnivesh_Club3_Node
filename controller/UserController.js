@@ -4,6 +4,7 @@ const encrypt = require('../util/encrypt');
 const tokenUtil = require('../util/token');
 const cloudinaryController = require("./CloudinaryController");
 const multer = require("multer")
+const mailUtil = require("../util/mailUtil");
 
 const getAllUsersFromDB = async(req, res) => {
     const users = await userModel.find()
@@ -35,6 +36,8 @@ const addUser = async(req, res) => {
     });
 
     const saveUser = await userModel.create(userObject);
+    await mailUtil.sendMail(saveUser.email, "Welcome", "Welcome to our app");
+    //otp
 
     res.status(201).json({
         message: "success",
